@@ -13,3 +13,12 @@ playwright-report/
 .vscode/
 
 results/
+
+
+# Environment files anywhere in Camunda infrastructure
+infrastructure/camunda/**/.env
+
+infrastructure/camunda/camunda-data/
+
+# Local connector secrets
+infrastructure/camunda/connector-secrets.txt
