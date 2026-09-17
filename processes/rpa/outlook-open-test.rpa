@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1jt7x5r",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    Camunda\nLibrary    OutlookLibrary\n\n*** Tasks ***\nOpen Outlook Test\n    ${title}=    Open Outlook\n\n    Log    Outlook window: ${title}\n\n    Set Output Variable    outlookWindowTitle    ${title}\n\n    Sleep    5s"
+}
