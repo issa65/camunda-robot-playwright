@@ -6,6 +6,7 @@ import io.camunda.client.api.response.ProcessInstanceEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.Map;
@@ -42,11 +43,23 @@ public class AutomationService {
 
     public AutomationStatusResponse getStatus(String processInstanceKey) {
 
-        Map<?, ?> response = restClient
-                .get()
-                .uri("/process-instances/{key}", processInstanceKey)
-                .retrieve()
-                .body(Map.class);
+        Map<?, ?> response;
+
+        try {
+            response = restClient
+                    .get()
+                    .uri("/process-instances/{key}", processInstanceKey)
+                    .retrieve()
+                    .body(Map.class);
+
+        } catch (RestClientResponseException exception) {
+
+            if (exception.getStatusCode().value() == 404) {
+                throw new AutomationNotFoundException(processInstanceKey);
+            }
+
+            throw exception;
+        }
 
         if (response == null) {
             throw new IllegalStateException("No response from Camunda");
@@ -135,10 +148,7 @@ public class AutomationService {
         Object itemsObject = response.get("items");
 
         if (!(itemsObject instanceof List<?> items) || items.isEmpty()) {
-            throw new IllegalStateException(
-                    "No active user task found for process instance "
-                            + processInstanceKey
-            );
+            throw new UserTaskNotFoundException(processInstanceKey);
         }
 
         Object firstItem = items.get(0);
