@@ -110,4 +110,54 @@ public class AutomationService {
             return rawValue;
         }
     }
+
+    public String completeUserTask(String processInstanceKey) {
+
+        Map<?, ?> response = restClient
+                .post()
+                .uri("/user-tasks/search")
+                .body(Map.of(
+                        "filter", Map.of(
+                                "processInstanceKey", processInstanceKey,
+                                "state", "CREATED"
+                        ),
+                        "page", Map.of(
+                                "limit", 10
+                        )
+                ))
+                .retrieve()
+                .body(Map.class);
+
+        if (response == null) {
+            throw new IllegalStateException("No response from Camunda");
+        }
+
+        Object itemsObject = response.get("items");
+
+        if (!(itemsObject instanceof List<?> items) || items.isEmpty()) {
+            throw new IllegalStateException(
+                    "No active user task found for process instance "
+                            + processInstanceKey
+            );
+        }
+
+        Object firstItem = items.get(0);
+
+        if (!(firstItem instanceof Map<?, ?> task)) {
+            throw new IllegalStateException("Invalid user task response");
+        }
+
+        String userTaskKey = String.valueOf(task.get("userTaskKey"));
+
+        restClient
+                .post()
+                .uri("/user-tasks/{userTaskKey}/completion", userTaskKey)
+                .body(Map.of())
+                .retrieve()
+                .toBodilessEntity();
+
+        return userTaskKey;
+    }
+
+
 }
