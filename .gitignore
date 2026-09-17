@@ -22,3 +22,8 @@ infrastructure/camunda/connector-secrets.txt
 # Camunda runtime data
 infrastructure/camunda/camunda-data/*
 !infrastructure/camunda/camunda-data/.gitkeep
+
+# Python build artifacts
+dist/
+build/
+*.egg-info/
