@@ -41,4 +41,18 @@ public class AutomationController {
                 automationService.getStatus(processInstanceKey)
         );
     }
+
+    @PostMapping("/{processInstanceKey}/complete")
+    public ResponseEntity<Map<String, Object>> complete(
+            @PathVariable String processInstanceKey) {
+
+        String userTaskKey =
+                automationService.completeUserTask(processInstanceKey);
+
+        return ResponseEntity.ok(Map.of(
+                "processInstanceKey", processInstanceKey,
+                "userTaskKey", userTaskKey,
+                "userTaskStatus", "COMPLETED"
+        ));
+    }
 }
