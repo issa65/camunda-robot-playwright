@@ -14,11 +14,11 @@ playwright-report/
 
 results/
 
-
-# Environment files anywhere in Camunda infrastructure
+# Camunda secrets / local environment
+infrastructure/camunda/.env
 infrastructure/camunda/**/.env
-
-infrastructure/camunda/camunda-data/
-
-# Local connector secrets
 infrastructure/camunda/connector-secrets.txt
+
+# Camunda runtime data
+infrastructure/camunda/camunda-data/*
+!infrastructure/camunda/camunda-data/.gitkeep

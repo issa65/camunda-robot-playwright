@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0dd63gz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.51.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
-  <bpmn:process id="Process_1ao0ai4" isExecutable="true">
+  <bpmn:process id="rpa-smoke-test" name="RPA Smoke Test" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_13ah0f5</bpmn:outgoing>
     </bpmn:startEvent>
@@ -13,6 +13,7 @@
         <zeebe:taskDefinition type="={&#10;  label: if (camundaRpaWorkerLabel = null or camundaRpaWorkerLabel = &#34;&#34;) then &#34;default&#34; else camundaRpaWorkerLabel,&#10;  baseName: &#34;camunda::RPA-Task::&#34;,&#10;  definitionType: baseName + label&#10;}.definitionType" retries="3" />
         <zeebe:ioMapping>
           <zeebe:input source="default" target="camundaRpaWorkerLabel" />
+          <zeebe:input source="={ url: url }" target="camundaRpaTaskInput" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="retryBackoff" value="PT30S" />
@@ -39,7 +40,7 @@
     <bpmn:sequenceFlow id="Flow_160fjr7" sourceRef="Activity_0dplypr" targetRef="Event_0dw4prg" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1ao0ai4">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rpa-smoke-test">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="172" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>

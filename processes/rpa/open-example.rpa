@@ -3,5 +3,5 @@
   "name": "",
   "executionPlatform": "Camunda Cloud",
   "executionPlatformVersion": "8.9.0",
-  "script": "*** Settings ***\nLibrary    Browser\nLibrary    Camunda\n\n*** Tasks ***\nOpen Example Page\n    New Browser    chromium    headless=False\n    New Page    https://example.com\n\n    ${title}=    Get Title\n    Log    Seitentitel: ${title}\n\n    Set Output Variable    pageTitle    ${title}\n\n    Sleep    5s\n\n    Close Browser"
+  "script": "*** Settings ***\nLibrary    Browser\nLibrary    Camunda\n\n*** Tasks ***\nOpen Example Page\n    New Browser    chromium    headless=False\n    New Page    ${url}\n\n    ${title}=    Get Title\n    Set Output Variable    pageTitle    ${title}\n\n    Sleep    3s\n    Close Browser"
 }
