@@ -5,6 +5,7 @@ import io.camunda.client.api.response.ProcessInstanceEvent;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import de.issa65.order_service.api.AutomationStatusResponse;
 
 import java.util.Map;
 
@@ -30,5 +31,14 @@ public class AutomationController {
                 "bpmnProcessId", instance.getBpmnProcessId(),
                 "version", instance.getVersion()
         ));
+    }
+
+    @GetMapping("/{processInstanceKey}")
+    public ResponseEntity<AutomationStatusResponse> getStatus(
+            @PathVariable String processInstanceKey) {
+
+        return ResponseEntity.ok(
+                automationService.getStatus(processInstanceKey)
+        );
     }
 }
