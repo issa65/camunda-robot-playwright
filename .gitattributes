@@ -8,3 +8,4 @@
 *.ts text eol=lf
 *.bpmn text eol=lf
 *.rpa text eol=lf
+*.dmn text eol=lf
