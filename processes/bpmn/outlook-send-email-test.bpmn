@@ -25,10 +25,35 @@
       <bpmn:outgoing>Flow_0iyb9a8</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:task id="Activity_0dw9mj7" name="Ergebnis Prüfen">
-      <bpmn:incoming>Flow_0iyb9a8</bpmn:incoming>
+      <bpmn:incoming>Flow_1xow8ye</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gi4wa1</bpmn:outgoing>
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_18pshkh" sourceRef="StartEvent_1" targetRef="Activity_1yrzra5" />
-    <bpmn:sequenceFlow id="Flow_0iyb9a8" sourceRef="Activity_1yrzra5" targetRef="Activity_0dw9mj7" />
+    <bpmn:sequenceFlow id="Flow_0iyb9a8" sourceRef="Activity_1yrzra5" targetRef="Activity_0anjtaj" />
+    <bpmn:serviceTask id="Activity_0anjtaj" name="Testergebnis speichern">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-test-result" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;Outlook Email E2E&#34;" target="testName" />
+          <zeebe:input source="=&#34;FUNCTIONAL&#34;" target="testType" />
+          <zeebe:input source="=&#34;Outlook&#34;" target="component" />
+          <zeebe:input source="=if emailSent = true and emailReceived = true&#10;then &#34;PASS&#34;&#10;else &#34;FAIL&#34;" target="result" />
+          <zeebe:input source="=testId" target="testRunId" />
+          <zeebe:input source="=&#34;Outlook Email E2E&#34;" target="testName" />
+          <zeebe:input source="=null" target="status" />
+          <zeebe:input source="=totalE2EDurationSeconds" target="durationSeconds" />
+          <zeebe:input source="=&#34;Outlook email send and receive validation&#34;" target="message" />
+          <zeebe:input source="=[]" target="metrics" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0iyb9a8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xow8ye</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1xow8ye" sourceRef="Activity_0anjtaj" targetRef="Activity_0dw9mj7" />
+    <bpmn:endEvent id="Event_18qyd5b">
+      <bpmn:incoming>Flow_0gi4wa1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0gi4wa1" sourceRef="Activity_0dw9mj7" targetRef="Event_18qyd5b" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0yemgbs">
@@ -40,8 +65,15 @@
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0dw9mj7_di" bpmnElement="Activity_0dw9mj7">
-        <dc:Bounds x="530" y="80" width="100" height="80" />
+        <dc:Bounds x="670" y="90" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0anjtaj_di" bpmnElement="Activity_0anjtaj">
+        <dc:Bounds x="480" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18qyd5b_di" bpmnElement="Event_18qyd5b">
+        <dc:Bounds x="862" y="112" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_18pshkh_di" bpmnElement="Flow_18pshkh">
         <di:waypoint x="218" y="120" />
@@ -49,7 +81,17 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0iyb9a8_di" bpmnElement="Flow_0iyb9a8">
         <di:waypoint x="420" y="120" />
-        <di:waypoint x="530" y="120" />
+        <di:waypoint x="480" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xow8ye_di" bpmnElement="Flow_1xow8ye">
+        <di:waypoint x="580" y="110" />
+        <di:waypoint x="625" y="110" />
+        <di:waypoint x="625" y="130" />
+        <di:waypoint x="670" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gi4wa1_di" bpmnElement="Flow_0gi4wa1">
+        <di:waypoint x="770" y="130" />
+        <di:waypoint x="862" y="130" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
