@@ -568,3 +568,51 @@ def inspect_outlook_onboarding_controls(timeout=10):
     logger.console("=== END OUTLOOK ONBOARDING INSPECTOR ===\n")
 
     return found
+
+
+def ensure_outlook_closed(timeout=10):
+    """
+    Ensures that Outlook is not running before a test starts.
+    """
+    if not _is_outlook_running():
+        return True
+
+    close_outlook(timeout)
+
+    if _is_outlook_running():
+        raise RuntimeError(
+            "Outlook is still running. "
+            "Test environment could not be prepared."
+        )
+
+    return True
+
+
+def close_outlook(timeout=10):
+    """
+    Closes Outlook completely.
+
+    Returns True if Outlook is closed.
+    """
+
+    if not _is_outlook_running():
+        return True
+
+    subprocess.run(
+        ["taskkill", "/IM", "OUTLOOK.EXE", "/T", "/F"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False
+    )
+
+    deadline = perf_counter() + float(timeout)
+
+    while perf_counter() < deadline:
+        if not _is_outlook_running():
+            return True
+
+        time.sleep(0.25)
+
+    raise RuntimeError(
+        "Outlook could not be closed within the timeout."
+    )
