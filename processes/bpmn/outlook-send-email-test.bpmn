@@ -5,7 +5,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="={&#10;  label: if (camundaRpaWorkerLabel = null or camundaRpaWorkerLabel = &#34;&#34;) then &#34;default&#34; else camundaRpaWorkerLabel,&#10;  baseName: &#34;camunda::RPA-Task::&#34;,&#10;  definitionType: baseName + label&#10;}.definitionType" retries="0" />
         <zeebe:ioMapping>
-          <zeebe:input source="default" target="camundaRpaWorkerLabel" />
+          <zeebe:input source="vm" target="camundaRpaWorkerLabel" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="retryBackoff" value="PT30S" />

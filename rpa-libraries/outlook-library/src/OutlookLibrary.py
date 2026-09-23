@@ -282,12 +282,7 @@ def fill_outlook_email(
     }
 
 
-def send_outlook_email(timeout=10):
-    """
-    Sends the currently open Outlook email.
-    Returns send status and send timestamp.
-    """
-
+def send_outlook_email(timeout=15):
     window = _get_compose_window(timeout)
 
     compose_wrapper = window.wrapper_object()
@@ -303,8 +298,6 @@ def send_outlook_email(timeout=10):
         timeout=float(timeout)
     )
 
-    send_started = perf_counter()
-
     known_com_error = None
 
     try:
@@ -319,10 +312,20 @@ def send_outlook_email(timeout=10):
     deadline = perf_counter() + float(timeout)
 
     while perf_counter() < deadline:
+
+        # Fenster wurde vollständig zerstört
         if not win32gui.IsWindow(compose_handle):
             return {
                 "sent": True,
-                "sendStarted": send_started
+                "sendStarted": perf_counter()
+            }
+
+        # Fenster existiert intern noch,
+        # ist aber für den Benutzer bereits geschlossen
+        if not win32gui.IsWindowVisible(compose_handle):
+            return {
+                "sent": True,
+                "sendStarted": perf_counter()
             }
 
         time.sleep(0.2)
@@ -330,14 +333,13 @@ def send_outlook_email(timeout=10):
     if known_com_error:
         raise RuntimeError(
             "Outlook send action raised a UI Automation COM error "
-            "and the compose window remained open."
+            "and the compose window remained visible."
         )
 
     raise RuntimeError(
         "Outlook send command was executed, "
-        "but the compose window did not close."
+        "but the compose window remained visible."
     )
-
 
 def generate_test_id():
     """
