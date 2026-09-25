@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1w3b3qe",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    Camunda\nLibrary    OutlookLibrary\n\n*** Tasks ***\nMeasure Outlook Performance\n    ${environment}=    Prepare Outlook Performance Test\n    Log    Environment status: ${environment}\n\n    ${result}=    Measure Outlook Startup\n\n    Log    Startup duration: ${result}[durationSeconds] seconds\n    Log    Window title: ${result}[windowTitle]\n    Log    Startup type: ${result}[startupType]\n\n    Set Output Variable\n    ...    outlookStartupDuration\n    ...    ${result}[durationSeconds]\n\n    Set Output Variable\n    ...    outlookWindowTitle\n    ...    ${result}[windowTitle]\n\n    Set Output Variable\n    ...    outlookStartupType\n    ...    ${result}[startupType]\n\n    Set Output Variable\n    ...    outlookMeasuredAt\n    ...    ${result}[measuredAt]"
+}

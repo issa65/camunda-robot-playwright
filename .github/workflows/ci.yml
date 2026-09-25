@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - setup-main-pc
+
+  pull_request:
+    branches:
+      - setup-main-pc
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  backend:
+    name: Spring Boot Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend/order-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: backend/order-service/pom.xml
+
+      - name: Make Maven wrapper executable
+        run: chmod +x mvnw
+
+      - name: Run backend tests
+        run: ./mvnw -B clean test
+
+
+  outlook-library:
+    name: Outlook Library Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: rpa-libraries/outlook-library
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+
+      - name: Check Python syntax
+        run: python -m compileall src
+
+      - name: Build Outlook library wheel
+        run: python -m build --wheel
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: outlook-library-wheel
+          path: rpa-libraries/outlook-library/dist/*.whl

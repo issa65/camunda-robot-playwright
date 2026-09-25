@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1sdgrm0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.51.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="Process_0smpcwr" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0c1walw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_0ypw3ji">
+      <bpmn:incoming>Flow_0i9s83m</bpmn:incoming>
+      <bpmn:outgoing>Flow_01yuoqg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0s4oh5s</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1hh54g2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ycsugc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1sb2ll8">
+      <bpmn:incoming>Flow_01yuoqg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_01yuoqg" name="OK" sourceRef="Gateway_0ypw3ji" targetRef="Event_1sb2ll8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=performanceStatus = "OK"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_14t9dsi" name="Performance prüfen">
+      <bpmn:incoming>Flow_0s4oh5s</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qm06g3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0s4oh5s" name="WARNING" sourceRef="Gateway_0ypw3ji" targetRef="Activity_14t9dsi">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=performanceStatus = "WARNING"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0pig6j0">
+      <bpmn:incoming>Flow_0qm06g3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qm06g3" sourceRef="Activity_14t9dsi" targetRef="Event_0pig6j0" />
+    <bpmn:sequenceFlow id="Flow_1hh54g2" name="CRITICAL" sourceRef="Gateway_0ypw3ji" targetRef="Activity_17mn37g">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=performanceStatus = "CRITICAL"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_05nc53m">
+      <bpmn:incoming>Flow_06350wb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_06350wb" sourceRef="Activity_17mn37g" targetRef="Event_05nc53m" />
+    <bpmn:sequenceFlow id="Flow_0c1walw" sourceRef="StartEvent_1" targetRef="Activity_17at8ik" />
+    <bpmn:serviceTask id="Activity_17at8ik" name="RPA: Outlook E-Mail E2E" zeebe:modelerTemplate="camunda.connectors.rpa" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyBpZD0iaWNvbiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogbm9uZTsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHRpdGxlPmJvdDwvdGl0bGU+CiAgPHJlY3QgeD0iMTgiIHk9IjEwIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjEwIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIi8+CiAgPHBhdGggZD0iTTI2LDIwSDIxVjE4aDFhMi4wMDIzLDIuMDAyMywwLDAsMCwyLTJWMTJoMlYxMEgyNFY4YTIuMDAyMywyLjAwMjMsMCwwLDAtMi0ySDIwVjJIMThWNkgxNFYySDEyVjZIMTBBMi4wMDIzLDIuMDAyMywwLDAsMCw4LDh2Mkg2djJIOHY0YTIuMDAyMywyLjAwMjMsMCwwLDAsMiwyaDF2Mkg2YTIuMDAyMywyLjAwMjMsMCwwLDAtMiwydjhINlYyMkgyNnY4aDJWMjJBMi4wMDIzLDIuMDAyMywwLDAsMCwyNiwyMFpNMTAsOEgyMnY4SDEwWm0zLDEwaDZ2MkgxM1oiLz4KICA8cmVjdCBpZD0iX1RyYW5zcGFyZW50X1JlY3RhbmdsZV8iIGRhdGEtbmFtZT0iJmx0O1RyYW5zcGFyZW50IFJlY3RhbmdsZSZndDsiIGNsYXNzPSJjbHMtMSIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIi8+Cjwvc3ZnPgo=">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="={&#10;  label: if (camundaRpaWorkerLabel = null or camundaRpaWorkerLabel = &#34;&#34;) then &#34;default&#34; else camundaRpaWorkerLabel,&#10;  baseName: &#34;camunda::RPA-Task::&#34;,&#10;  definitionType: baseName + label&#10;}.definitionType" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="laptop" target="camundaRpaWorkerLabel" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="retryBackoff" value="PT30S" />
+        </zeebe:taskHeaders>
+        <zeebe:properties>
+          <zeebe:property name="camunda::enablePreRun" value="false" />
+          <zeebe:property name="camunda::postRun" value="false" />
+        </zeebe:properties>
+        <zeebe:linkedResources>
+          <zeebe:linkedResource resourceId="RPA_1ybo8d0" resourceType="RPA" linkName="RPAScript" />
+        </zeebe:linkedResources>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0c1walw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0czpcac</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:businessRuleTask id="Activity_0e3miat" name="E-Mail Performance bewerten">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="outlookEmailPerformance" resultVariable="performanceStatus" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1yd7kv3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pfc66i</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:serviceTask id="Activity_17mn37g" name="Alert / E-Mail" zeebe:modelerTemplate="io.camunda.connectors.email.v1" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzkwXzI0MjApIj4KPHBhdGggZD0iTTguMzM4MzUgOS45NTM2NUwxMC4zODk0IDEyLjAxMDRMOC4zMzI2MiAxNC4wNjcyTDkuMTQ2MTYgMTQuODc1TDEyLjAxMDcgMTIuMDEwNEw5LjE0NjE2IDkuMTQ1ODNMOC4zMzgzNSA5Ljk1MzY1WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZD0iTTEyLjM0ODggOS45NTM2NUwxNC4zOTk4IDEyLjAxMDRMMTIuMzQzIDE0LjA2NzJMMTMuMTU2NiAxNC44NzVMMTYuMDIxMiAxMi4wMTA0TDEzLjE1NjYgOS4xNDU4M0wxMi4zNDg4IDkuOTUzNjVaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBkPSJNMy45NzIgMTEuNDM3NUgxLjEyNTMzVjIuNzkyMTlMNy42NzM3NiA3LjMyMzk2QzcuNzY5NjcgNy4zOTA0OSA3Ljg4MzYgNy40MjYxNCA4LjAwMDMyIDcuNDI2MTRDOC4xMTcwNSA3LjQyNjE0IDguMjMwOTggNy4zOTA0OSA4LjMyNjg5IDcuMzIzOTZMMTQuODc1MyAyLjc5MjE5VjhIMTYuMDIxMlYyLjI3MDgzQzE2LjAyMTIgMS45NjY5NCAxNS45MDA0IDEuNjc1NDkgMTUuNjg1NiAxLjQ2MDYxQzE1LjQ3MDcgMS4yNDU3MiAxNS4xNzkyIDEuMTI1IDE0Ljg3NTMgMS4xMjVIMS4xMjUzM0MwLjgyMTQzMiAxLjEyNSAwLjUyOTk4NCAxLjI0NTcyIDAuMzE1MDk5IDEuNDYwNjFDMC4xMDAyMTQgMS42NzU0OSAtMC4wMjA1MDc4IDEuOTY2OTQgLTAuMDIwNTA3OCAyLjI3MDgzVjExLjQzNzVDLTAuMDIwNTA3OCAxMS43NDE0IDAuMTAwMjE0IDEyLjAzMjggMC4zMTUwOTkgMTIuMjQ3N0MwLjUyOTk4NCAxMi40NjI2IDAuODIxNDMyIDEyLjU4MzMgMS4xMjUzMyAxMi41ODMzSDMuOTcyVjExLjQzNzVaTTEzLjYxNDkgMi4yNzA4M0w4LjAwMDMyIDYuMTU1MjFMMi4zODU3NCAyLjI3MDgzSDEzLjYxNDlaIiBmaWxsPSIjRkM1RDBEIi8+CjxwYXRoIGQ9Ik00LjI4MjEgOS45NTM2NUw2LjMzMzE0IDEyLjAxMDRMNC4yNzYzNyAxNC4wNjcyTDUuMDg5OTEgMTQuODc1TDcuOTU0NDkgMTIuMDEwNEw1LjA4OTkxIDkuMTQ1ODNMNC4yODIxIDkuOTUzNjVaIiBmaWxsPSJibGFjayIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzkwXzI0MjAiPgo8cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:email:1" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="smtp" target="protocol" />
+          <zeebe:input source="host.docker.internal" target="data.smtpConfig.smtpHost" />
+          <zeebe:input source="=1025" target="data.smtpConfig.smtpPort" />
+          <zeebe:input source="NONE" target="data.smtpConfig.smtpCryptographicProtocol" />
+          <zeebe:input source="sendEmailSmtp" target="data.smtpActionDiscriminator" />
+          <zeebe:input source="camunda-monitor@test.local" target="data.smtpAction.from" />
+          <zeebe:input source="ahmad@test.local" target="data.smtpAction.to" />
+          <zeebe:input source="=&#34;Outlook E2E Performance &#34; + performanceStatus" target="data.smtpAction.subject" />
+          <zeebe:input source="PLAIN" target="data.smtpAction.contentType" />
+          <zeebe:input source="=&#34;Outlook E2E Performance Alert&#10;&#10;Status: &#34; + performanceStatus +&#10;&#34;&#10;Test ID: &#34; + testId +&#10;&#34;&#10;Subject: &#34; + subject +&#10;&#34;&#10;Delivery Duration: &#34; + string(deliveryDurationSeconds) + &#34; s&#34; +&#10;&#34;&#10;Total E2E Duration: &#34; + string(totalE2EDurationSeconds) + &#34; s&#34;" target="data.smtpAction.body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="elementTemplateVersion" value="4" />
+          <zeebe:header key="elementTemplateId" value="io.camunda.connectors.email.v1" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hh54g2</bpmn:incoming>
+      <bpmn:outgoing>Flow_06350wb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0fgwvl7" name="Testergebnis speichern">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-test-result" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=testId" target="testRunId" />
+          <zeebe:input source="=&#34;Outlook Email Performance&#34;" target="testName" />
+          <zeebe:input source="=&#34;TECHNICAL&#34;" target="testType" />
+          <zeebe:input source="=&#34;Outlook&#34;" target="component" />
+          <zeebe:input source="=if emailSent = true and emailReceived = true&#10;then &#34;PASS&#34;&#10;else &#34;FAIL&#34;" target="result" />
+          <zeebe:input source="=if testResult = &#34;FAIL&#34; then &#34;ERROR&#34; else performanceStatus" target="status" />
+          <zeebe:input source="=totalE2EDurationSeconds" target="durationSeconds" />
+          <zeebe:input source="=&#34;Outlook email E2E performance test&#34;" target="message" />
+          <zeebe:input source="=workerUser" target="workerUser" />
+          <zeebe:input source="=workerHost" target="workerHost" />
+          <zeebe:input source="=errorType" target="errorType" />
+          <zeebe:input source="=workerIpAddress" target="workerIpAddress" />
+          <zeebe:input source="=errorMessage" target="errorMessage" />
+          <zeebe:input source="=deliveryDurationSeconds" target="deliveryDurationSeconds" />
+          <zeebe:input source="=startupToLoadingSeconds" target="startupToLoadingSeconds" />
+          <zeebe:input source="=loadingToMainSeconds" target="loadingToMainSeconds" />
+          <zeebe:input source="=startupToMainSeconds" target="startupToMainSeconds" />
+          <zeebe:input source="=startupPath" target="startupPath" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pfc66i</bpmn:incoming>
+      <bpmn:incoming>Flow_0sfniry</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i9s83m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1pfc66i" sourceRef="Activity_0e3miat" targetRef="Activity_0fgwvl7" />
+    <bpmn:sequenceFlow id="Flow_0i9s83m" sourceRef="Activity_0fgwvl7" targetRef="Gateway_0ypw3ji" />
+    <bpmn:exclusiveGateway id="Gateway_1861mi3">
+      <bpmn:incoming>Flow_0czpcac</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yd7kv3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0sfniry</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1yd7kv3" name="PASS" sourceRef="Gateway_1861mi3" targetRef="Activity_0e3miat">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=testResult = "PASS"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0czpcac" sourceRef="Activity_17at8ik" targetRef="Gateway_1861mi3" />
+    <bpmn:sequenceFlow id="Flow_0sfniry" name="FAIL" sourceRef="Gateway_1861mi3" targetRef="Activity_0fgwvl7">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=testResult = "FAIL"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0ral4b3">
+      <bpmn:incoming>Flow_1ycsugc</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ycsugc" name="FAIL" sourceRef="Gateway_0ypw3ji" targetRef="Event_0ral4b3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=testResult = "FAIL"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0smpcwr">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ypw3ji_di" bpmnElement="Gateway_0ypw3ji" isMarkerVisible="true">
+        <dc:Bounds x="515" y="365" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sb2ll8_di" bpmnElement="Event_1sb2ll8">
+        <dc:Bounds x="682" y="372" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14t9dsi_di" bpmnElement="Activity_14t9dsi">
+        <dc:Bounds x="690" y="460" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pig6j0_di" bpmnElement="Event_0pig6j0">
+        <dc:Bounds x="922" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05nc53m_di" bpmnElement="Event_05nc53m">
+        <dc:Bounds x="922" y="592" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02k0don_di" bpmnElement="Activity_17at8ik">
+        <dc:Bounds x="300" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ystmmn_di" bpmnElement="Activity_17mn37g">
+        <dc:Bounds x="690" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fgwvl7_di" bpmnElement="Activity_0fgwvl7">
+        <dc:Bounds x="490" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1861mi3_di" bpmnElement="Gateway_1861mi3" isMarkerVisible="true">
+        <dc:Bounds x="425" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0e3miat_di" bpmnElement="Activity_0e3miat">
+        <dc:Bounds x="570" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ral4b3_di" bpmnElement="Event_0ral4b3">
+        <dc:Bounds x="692" y="702" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_01yuoqg_di" bpmnElement="Flow_01yuoqg">
+        <di:waypoint x="565" y="390" />
+        <di:waypoint x="682" y="390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616" y="372" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s4oh5s_di" bpmnElement="Flow_0s4oh5s">
+        <di:waypoint x="540" y="415" />
+        <di:waypoint x="540" y="500" />
+        <di:waypoint x="690" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="553" y="472.5" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qm06g3_di" bpmnElement="Flow_0qm06g3">
+        <di:waypoint x="790" y="500" />
+        <di:waypoint x="922" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hh54g2_di" bpmnElement="Flow_1hh54g2">
+        <di:waypoint x="540" y="415" />
+        <di:waypoint x="540" y="610" />
+        <di:waypoint x="690" y="610" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="554" y="582.5" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06350wb_di" bpmnElement="Flow_06350wb">
+        <di:waypoint x="790" y="610" />
+        <di:waypoint x="922" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c1walw_di" bpmnElement="Flow_0c1walw">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="300" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pfc66i_di" bpmnElement="Flow_1pfc66i">
+        <di:waypoint x="620" y="160" />
+        <di:waypoint x="620" y="195" />
+        <di:waypoint x="540" y="195" />
+        <di:waypoint x="540" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i9s83m_di" bpmnElement="Flow_0i9s83m">
+        <di:waypoint x="540" y="310" />
+        <di:waypoint x="540" y="365" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yd7kv3_di" bpmnElement="Flow_1yd7kv3">
+        <di:waypoint x="475" y="120" />
+        <di:waypoint x="570" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="508" y="102" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0czpcac_di" bpmnElement="Flow_0czpcac">
+        <di:waypoint x="400" y="120" />
+        <di:waypoint x="425" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sfniry_di" bpmnElement="Flow_0sfniry">
+        <di:waypoint x="450" y="145" />
+        <di:waypoint x="450" y="270" />
+        <di:waypoint x="490" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="204.5" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ycsugc_di" bpmnElement="Flow_1ycsugc">
+        <di:waypoint x="540" y="415" />
+        <di:waypoint x="540" y="720" />
+        <di:waypoint x="692" y="720" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="578" y="702.5" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

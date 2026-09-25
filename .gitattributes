@@ -1,0 +1,11 @@
+* text=auto
+
+*.yaml text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+*.properties text eol=lf
+*.json text eol=lf
+*.ts text eol=lf
+*.bpmn text eol=lf
+*.rpa text eol=lf
+*.dmn text eol=lf
