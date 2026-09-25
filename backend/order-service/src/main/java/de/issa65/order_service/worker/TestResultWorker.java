@@ -6,7 +6,6 @@ import io.camunda.client.api.response.ActivatedJob;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -25,43 +24,112 @@ public class TestResultWorker {
                     "testName",
                     "testType",
                     "component",
+
+                    "workerUser",
+                    "workerHost",
+                    "workerIpAddress",
+
                     "result",
                     "status",
+
                     "durationSeconds",
-                    "message",
-                    "metrics"
+                    "deliveryDurationSeconds",
+
+                    "startupToLoadingSeconds",
+                    "loadingToMainSeconds",
+                    "startupToMainSeconds",
+                    "startupPath",
+
+                    "errorType",
+                    "errorMessage",
+                    "message"
             }
     )
     public void saveTestResult(ActivatedJob job) throws IOException {
 
-        Map<String, Object> variables = job.getVariablesAsMap();
+        Map<String, Object> variables =
+                job.getVariablesAsMap();
 
-        String testRunId = (String) variables.get("testRunId");
-        String testName = (String) variables.get("testName");
-        String testType = (String) variables.get("testType");
-        String component = (String) variables.get("component");
-        String result = (String) variables.get("result");
-        String status = (String) variables.get("status");
-        String message = (String) variables.get("message");
+        String testRunId =
+                toStringValue(variables.get("testRunId"));
+
+        String testName =
+                toStringValue(variables.get("testName"));
+
+        String testType =
+                toStringValue(variables.get("testType"));
+
+        String component =
+                toStringValue(variables.get("component"));
+
+        String workerUser =
+                toStringValue(variables.get("workerUser"));
+
+        String workerHost =
+                toStringValue(variables.get("workerHost"));
+
+        String workerIpAddress =
+                toStringValue(variables.get("workerIpAddress"));
+
+        String result =
+                toStringValue(variables.get("result"));
+
+        String status =
+                toStringValue(variables.get("status"));
 
         Double durationSeconds =
                 toDouble(variables.get("durationSeconds"));
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> metrics =
-                (List<Map<String, Object>>) variables.get("metrics");
+        Double deliveryDurationSeconds =
+                toDouble(variables.get("deliveryDurationSeconds"));
+
+        Double startupToLoadingSeconds =
+                toDouble(variables.get("startupToLoadingSeconds"));
+
+        Double loadingToMainSeconds =
+                toDouble(variables.get("loadingToMainSeconds"));
+
+        Double startupToMainSeconds =
+                toDouble(variables.get("startupToMainSeconds"));
+
+        String startupPath =
+                toStringValue(variables.get("startupPath"));
+
+        String errorType =
+                toStringValue(variables.get("errorType"));
+
+        String errorMessage =
+                toStringValue(variables.get("errorMessage"));
+
+        String message =
+                toStringValue(variables.get("message"));
 
         csvTestResultService.append(
                 job.getProcessInstanceKey(),
+
                 testRunId,
                 testName,
                 testType,
                 component,
+
+                workerUser,
+                workerHost,
+                workerIpAddress,
+
                 result,
                 status,
+
                 durationSeconds,
-                message,
-                metrics
+                deliveryDurationSeconds,
+
+                startupToLoadingSeconds,
+                loadingToMainSeconds,
+                startupToMainSeconds,
+                startupPath,
+
+                errorType,
+                errorMessage,
+                message
         );
     }
 
@@ -74,6 +142,20 @@ public class TestResultWorker {
             return number.doubleValue();
         }
 
-        return Double.valueOf(value.toString());
+        String text = value.toString();
+
+        if (text.isBlank()) {
+            return null;
+        }
+
+        return Double.valueOf(text);
+    }
+
+    private String toStringValue(Object value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value.toString();
     }
 }
