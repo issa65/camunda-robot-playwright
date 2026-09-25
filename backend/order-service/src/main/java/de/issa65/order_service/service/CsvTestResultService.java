@@ -8,8 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class CsvTestResultService {
@@ -18,9 +16,26 @@ public class CsvTestResultService {
             Path.of("data", "test-results.csv");
 
     private static final String HEADER =
-            "timestamp;processInstanceKey;testRunId;testName;testType;component;" +
-                    "recordType;result;status;durationSeconds;metricName;metricValue;" +
-                    "metricUnit;message";
+            "timestamp;" +
+                    "processInstanceKey;" +
+                    "testRunId;" +
+                    "testName;" +
+                    "testType;" +
+                    "component;" +
+                    "workerUser;" +
+                    "workerHost;" +
+                    "workerIpAddress;" +
+                    "result;" +
+                    "status;" +
+                    "durationSeconds;" +
+                    "deliveryDurationSeconds;" +
+                    "startupToLoadingSeconds;" +
+                    "loadingToMainSeconds;" +
+                    "startupToMainSeconds;" +
+                    "startupPath;" +
+                    "errorType;" +
+                    "errorMessage;" +
+                    "message";
 
     public synchronized void append(
             long processInstanceKey,
@@ -28,11 +43,25 @@ public class CsvTestResultService {
             String testName,
             String testType,
             String component,
+
+            String workerUser,
+            String workerHost,
+            String workerIpAddress,
+
             String result,
             String status,
+
             Double durationSeconds,
-            String message,
-            List<Map<String, Object>> metrics
+            Double deliveryDurationSeconds,
+
+            Double startupToLoadingSeconds,
+            Double loadingToMainSeconds,
+            Double startupToMainSeconds,
+            String startupPath,
+
+            String errorType,
+            String errorMessage,
+            String message
     ) throws IOException {
 
         Files.createDirectories(CSV_PATH.getParent());
@@ -48,76 +77,33 @@ public class CsvTestResultService {
 
         String timestamp = Instant.now().toString();
 
-        writeLine(
-                timestamp,
-                processInstanceKey,
-                testRunId,
-                testName,
-                testType,
-                component,
-                "SUMMARY",
-                result,
-                status,
-                durationSeconds,
-                "",
-                "",
-                "",
-                message
-        );
-
-        if (metrics != null) {
-            for (Map<String, Object> metric : metrics) {
-                writeLine(
-                        timestamp,
-                        processInstanceKey,
-                        testRunId,
-                        testName,
-                        testType,
-                        component,
-                        "METRIC",
-                        "",
-                        "",
-                        null,
-                        String.valueOf(metric.getOrDefault("name", "")),
-                        String.valueOf(metric.getOrDefault("value", "")),
-                        String.valueOf(metric.getOrDefault("unit", "")),
-                        ""
-                );
-            }
-        }
-    }
-
-    private void writeLine(
-            String timestamp,
-            long processInstanceKey,
-            String testRunId,
-            String testName,
-            String testType,
-            String component,
-            String recordType,
-            String result,
-            String status,
-            Double durationSeconds,
-            String metricName,
-            String metricValue,
-            String metricUnit,
-            String message
-    ) throws IOException {
-
         String line = String.join(";",
                 csv(timestamp),
                 String.valueOf(processInstanceKey),
+
                 csv(testRunId),
                 csv(testName),
                 csv(testType),
                 csv(component),
-                csv(recordType),
+
+                csv(workerUser),
+                csv(workerHost),
+                csv(workerIpAddress),
+
                 csv(result),
                 csv(status),
-                durationSeconds == null ? "" : String.valueOf(durationSeconds),
-                csv(metricName),
-                csv(metricValue),
-                csv(metricUnit),
+
+                number(durationSeconds),
+                number(deliveryDurationSeconds),
+
+                number(startupToLoadingSeconds),
+                number(loadingToMainSeconds),
+                number(startupToMainSeconds),
+
+                csv(startupPath),
+
+                csv(errorType),
+                csv(errorMessage),
                 csv(message)
         );
 
@@ -128,6 +114,14 @@ public class CsvTestResultService {
                 StandardOpenOption.CREATE,
                 StandardOpenOption.APPEND
         );
+    }
+
+    private String number(Double value) {
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(value);
     }
 
     private String csv(String value) {
@@ -141,6 +135,7 @@ public class CsvTestResultService {
                 || escaped.contains("\"")
                 || escaped.contains("\n")
                 || escaped.contains("\r")) {
+
             return "\"" + escaped + "\"";
         }
 
