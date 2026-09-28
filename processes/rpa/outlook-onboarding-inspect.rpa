@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1g041tr",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    Camunda\nLibrary    OutlookLibrary\n\n*** Tasks ***\nInspect Outlook Onboarding\n    ${found}=    Inspect Outlook Onboarding Controls    timeout=10\n\n    Set Output Variable\n    ...    onboardingFound\n    ...    ${found}"
+}

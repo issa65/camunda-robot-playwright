@@ -1,0 +1,7 @@
+{
+  "id": "RPA_003nnx3",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    Camunda\nLibrary    OutlookLibrary\n\nTask Setup       Ensure Outlook Closed\nTask Teardown    Close Outlook\n\n\n*** Tasks ***\nInspect Outlook Startup Windows\n    ${windows}=    Inspect Outlook Startup Windows\n    ...    timeout=15\n    ...    poll_interval=0.05\n\n    Set Output Variable\n    ...    observedWindows\n    ...    ${windows}"
+}

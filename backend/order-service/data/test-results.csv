@@ -1,12 +1,9 @@
-timestamp;processInstanceKey;testRunId;testName;testType;component;recordType;result;status;durationSeconds;metricName;metricValue;metricUnit;message
-2026-09-21T15:16:24.542198200Z;2251799813824240;58CC5879;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;26.698;;;;Outlook email send and receive validation
-2026-09-21T15:21:33.240601700Z;2251799813824889;D1D105DF;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;34.709;;;;Outlook email send and receive validation
-2026-09-21T15:26:18.295303600Z;2251799813825515;538CCFB9;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;19.743;;;;Outlook email send and receive validation
-2026-09-21T15:54:36.561981800Z;2251799813826092;A9EEDE9A;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;25.935;;;;Outlook email send and receive validation
-2026-09-21T15:55:12.374210200Z;2251799813826106;A73744A9;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;25.059;;;;Outlook email send and receive validation
-2026-09-21T15:55:52.864856400Z;2251799813826117;EC6B5D5C;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;29.248;;;;Outlook email send and receive validation
-2026-09-21T21:49:48.716631100Z;2251799813827180;C0A718B6;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;27.327;;;;Outlook email send and receive validation
-2026-09-21T21:50:21.499288200Z;2251799813827192;988B96F7;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;20.204;;;;Outlook email send and receive validation
-2026-09-21T21:51:01.316152800Z;2251799813827349;639C602A;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;28.103;;;;Outlook email send and receive validation
-2026-09-21T21:51:40.045988200Z;2251799813827361;CCBBC5C0;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;26.163;;;;Outlook email send and receive validation
-2026-09-23T19:37:31.066847400Z;2251799813853060;D40BD467;Outlook Email E2E;FUNCTIONAL;Outlook;SUMMARY;PASS;;34.284;;;;Outlook email send and receive validation
+timestamp;processInstanceKey;testRunId;testName;testType;component;workerUser;workerHost;workerIpAddress;result;status;durationSeconds;deliveryDurationSeconds;startupToLoadingSeconds;loadingToMainSeconds;startupToMainSeconds;startupPath;errorType;errorMessage;message
+2026-09-27T17:42:35.103845600Z;2251799814014538;9E7D67D0;Excel Basic Functional;FUNCTIONAL;Excel;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;17.281;;;;;;;;Excel cell write/read validation
+2026-09-27T17:56:05.497608600Z;2251799814016771;F2B68960;Excel Startup Performance;TECHNICAL;Excel;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;;;3.11;1.57;4.679;LOADING_TO_MAIN;;;Excel cold startup performance measurement
+2026-09-27T17:59:30.221911100Z;2251799814017293;03862FFA;Outlook Email E2E;FUNCTIONAL;Outlook;vboxuser;RPA-WINDOWS-01;10.0.2.15;FAIL;;29.98;0.0;;;;;TestExecutionError;No keyword with name 'Wait For Outlook Email' found.;Outlook email send and receive validation
+2026-09-27T20:03:36.080589300Z;2251799814022624;6D763751;Outlook Email Performance;TECHNICAL;Outlook;vboxuser;RPA-WINDOWS-01;10.0.2.15;FAIL;ERROR;35.873;0.0;7.6;5.582;13.182;LOADING_TO_MAIN;TestExecutionError;No keyword with name 'Wait For Outlook Email' found.;Outlook email E2E performance test
+2026-09-27T20:08:04.794834700Z;2251799814023387;6512AA33;Outlook Email Performance;TECHNICAL;Outlook;vboxuser;RPA-WINDOWS-01;10.0.2.15;FAIL;ERROR;21.098;0.0;1.377;2.059;3.436;LOADING_TO_MAIN;TestExecutionError;No keyword with name 'Wait For Outlook Email' found.;Outlook email E2E performance test
+2026-09-27T20:23:44.913596600Z;2251799814025722;EF2689F4;Outlook Email Performance;TECHNICAL;Outlook;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;WARNING;24.948;13.52;2.484;3.422;5.906;LOADING_TO_MAIN;;;Outlook email E2E performance test
+2026-09-28T09:38:58.855602200Z;2251799814032865;348CC98F;Excel Basic Functional;FUNCTIONAL;Excel;ahmad;DESKTOP-8SEM6R1;192.168.178.155;PASS;;42.797;;;;;;;;Excel cell write/read validation
+2026-09-28T10:23:04.574525300Z;2251799814036063;0EBEF945;Excel Basic Functional;FUNCTIONAL;Excel;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;23.811;;;;;;;;Excel cell write/read validation

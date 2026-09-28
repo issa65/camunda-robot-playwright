@@ -18,7 +18,7 @@
           <zeebe:property name="camunda::postRun" value="false" />
         </zeebe:properties>
         <zeebe:linkedResources>
-          <zeebe:linkedResource resourceId="RPA_1w3b3qe" resourceType="RPA" linkName="RPAScript" />
+          <zeebe:linkedResource resourceId="RPA_1ybo8d0" resourceType="RPA" linkName="RPAScript" />
         </zeebe:linkedResources>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1evx4t7</bpmn:incoming>
@@ -135,16 +135,16 @@
         <di:waypoint x="390" y="120" />
         <di:waypoint x="480" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_179nuxd_di" bpmnElement="Flow_179nuxd">
-        <di:waypoint x="530" y="160" />
-        <di:waypoint x="530" y="215" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ycoxsw_di" bpmnElement="Flow_0ycoxsw">
         <di:waypoint x="555" y="240" />
         <di:waypoint x="922" y="240" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="733" y="222" width="16" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_179nuxd_di" bpmnElement="Flow_179nuxd">
+        <di:waypoint x="530" y="160" />
+        <di:waypoint x="530" y="215" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wz0sbr_di" bpmnElement="Flow_1wz0sbr">
         <di:waypoint x="530" y="265" />
@@ -154,6 +154,10 @@
           <dc:Bounds x="555" y="362.5" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oetdrs_di" bpmnElement="Flow_0oetdrs">
+        <di:waypoint x="800" y="350" />
+        <di:waypoint x="922" y="350" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17vacfn_di" bpmnElement="Flow_17vacfn">
         <di:waypoint x="530" y="265" />
         <di:waypoint x="530" y="460" />
@@ -161,10 +165,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="564" y="442.5" width="51" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0oetdrs_di" bpmnElement="Flow_0oetdrs">
-        <di:waypoint x="800" y="350" />
-        <di:waypoint x="922" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_15f5hwg_di" bpmnElement="Flow_15f5hwg">
         <di:waypoint x="800" y="460" />

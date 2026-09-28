@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1pmvlhe",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    OfficeInspectorLibrary\n\n*** Tasks ***\nInspect Excel Window\n    ${metadata}=    Get Foreground Window Metadata\n    Log To Console    ${metadata}\n\n    ${windows}=    Inspect Foreground Process Windows\n    Log To Console    ${windows}\n\n    ${controls}=    Inspect Foreground Window Controls\n    Log To Console    ${controls}"
+}
