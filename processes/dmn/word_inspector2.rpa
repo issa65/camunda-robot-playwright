@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1n5m72c",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    OfficeInspectorLibrary\n\n*** Tasks ***\nInspect Word Main Window\n    ${result}=    Inspect Foreground Window Controls\n    ...    //ISSA/Gemeinsame Dateien/locators/word-document.json\n    ...    word\n    ...    ${False}\n\n    Log    ${result}"
+}

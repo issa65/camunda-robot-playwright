@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1um7grp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.51.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="Process_0c0lhj8" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1g4ajfc</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0iwkypc">
+      <bpmn:incoming>Flow_0f7czai</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0anjtaj" name="Testergebnis speichern">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-test-result" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;PowerPoint E2E save file&#34;" target="testName" />
+          <zeebe:input source="=&#34;FUNCTIONAL&#34;" target="testType" />
+          <zeebe:input source="=&#34;PowerPoint&#34;" target="component" />
+          <zeebe:input source="=testResult" target="result" />
+          <zeebe:input source="=testRunId" target="testRunId" />
+          <zeebe:input source="=&#34;PowerPoint save Functional&#34;" target="testName" />
+          <zeebe:input source="=null" target="status" />
+          <zeebe:input source="=durationSeconds" target="durationSeconds" />
+          <zeebe:input source="=&#34;PowerPoint save file validation&#34;" target="message" />
+          <zeebe:input source="=[]" target="metrics" />
+          <zeebe:input source="=workerUser" target="workerUser" />
+          <zeebe:input source="=workerHost" target="workerHost" />
+          <zeebe:input source="=workerIpAddress" target="workerIpAddress" />
+          <zeebe:input source="=errorType" target="errorType" />
+          <zeebe:input source="=errorMessage" target="errorMessage" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0hn9k7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f7czai</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1g4ajfc" sourceRef="StartEvent_1" targetRef="Activity_0dpugo3" />
+    <bpmn:serviceTask id="Activity_0dpugo3" name="RPA: Save PowerPoint file" zeebe:modelerTemplate="camunda.connectors.rpa" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyBpZD0iaWNvbiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogbm9uZTsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHRpdGxlPmJvdDwvdGl0bGU+CiAgPHJlY3QgeD0iMTgiIHk9IjEwIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjEwIiB3aWR0aD0iMiIgaGVpZ2h0PSIyIi8+CiAgPHBhdGggZD0iTTI2LDIwSDIxVjE4aDFhMi4wMDIzLDIuMDAyMywwLDAsMCwyLTJWMTJoMlYxMEgyNFY4YTIuMDAyMywyLjAwMjMsMCwwLDAtMi0ySDIwVjJIMThWNkgxNFYySDEyVjZIMTBBMi4wMDIzLDIuMDAyMywwLDAsMCw4LDh2Mkg2djJIOHY0YTIuMDAyMywyLjAwMjMsMCwwLDAsMiwyaDF2Mkg2YTIuMDAyMywyLjAwMjMsMCwwLDAtMiwydjhINlYyMkgyNnY4aDJWMjJBMi4wMDIzLDIuMDAyMywwLDAsMCwyNiwyMFpNMTAsOEgyMnY4SDEwWm0zLDEwaDZ2MkgxM1oiLz4KICA8cmVjdCBpZD0iX1RyYW5zcGFyZW50X1JlY3RhbmdsZV8iIGRhdGEtbmFtZT0iJmx0O1RyYW5zcGFyZW50IFJlY3RhbmdsZSZndDsiIGNsYXNzPSJjbHMtMSIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIi8+Cjwvc3ZnPgo=">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="={&#10;  label: if (camundaRpaWorkerLabel = null or camundaRpaWorkerLabel = &#34;&#34;) then &#34;default&#34; else camundaRpaWorkerLabel,&#10;  baseName: &#34;camunda::RPA-Task::&#34;,&#10;  definitionType: baseName + label&#10;}.definitionType" retries="3" />
+        <zeebe:ioMapping>
+          <zeebe:input source="default" target="camundaRpaWorkerLabel" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="retryBackoff" value="PT30S" />
+        </zeebe:taskHeaders>
+        <zeebe:properties>
+          <zeebe:property name="camunda::enablePreRun" value="false" />
+          <zeebe:property name="camunda::postRun" value="false" />
+        </zeebe:properties>
+        <zeebe:linkedResources>
+          <zeebe:linkedResource resourceId="RPA_1j7s2k1" resourceType="RPA" linkName="RPAScript" />
+        </zeebe:linkedResources>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1g4ajfc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hn9k7e</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0hn9k7e" sourceRef="Activity_0dpugo3" targetRef="Activity_0anjtaj" />
+    <bpmn:sequenceFlow id="Flow_0f7czai" sourceRef="Activity_0anjtaj" targetRef="Event_0iwkypc" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0c0lhj8">
+      <bpmndi:BPMNShape id="Event_0iwkypc_di" bpmnElement="Event_0iwkypc">
+        <dc:Bounds x="602" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wp0odn_di" bpmnElement="Activity_0dpugo3">
+        <dc:Bounds x="280" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0anjtaj_di" bpmnElement="Activity_0anjtaj">
+        <dc:Bounds x="440" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1g4ajfc_di" bpmnElement="Flow_1g4ajfc">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="280" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hn9k7e_di" bpmnElement="Flow_0hn9k7e">
+        <di:waypoint x="380" y="120" />
+        <di:waypoint x="440" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f7czai_di" bpmnElement="Flow_0f7czai">
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="602" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
