@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_1fstwbf" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.51.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <decision id="Decision_0gl6t7v" name="Decision 1">
+    <variable id="Variable_1" name="Decision 1" typeRef="Any" />
+    <decisionTable id="DecisionTable_1tjpovo" hitPolicy="FIRST">
+      <input id="Input_1" label="deliveryDurationSeconds" biodi:width="241">
+        <inputExpression id="InputExpression_1" typeRef="number">
+          <text>deliveryDurationSeconds</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1lehmgz" label="totalE2EDurationSeconds" biodi:width="254">
+        <inputExpression id="LiteralExpression_08m4r45" typeRef="number">
+          <text>totalE2EDurationSeconds</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="performanceStatus" typeRef="string" />
+      <rule id="DecisionRule_0ci1mhu">
+        <inputEntry id="UnaryTests_0xhy10m">
+          <text>&gt; 20</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02ct4m6">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_04dsew0">
+          <text>"CRITICAL"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1fy6l69">
+        <inputEntry id="UnaryTests_0icelzh">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02crxg0">
+          <text>&gt; 30</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0jnw3ty">
+          <text>"CRITICAL"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04vocgk">
+        <inputEntry id="UnaryTests_1y74swy">
+          <text>&lt;= 10</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ub1swa">
+          <text>&lt;=20</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1gbv2mx">
+          <text>"OK"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1yluqun">
+        <inputEntry id="UnaryTests_1883ryf">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_139wlf8">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_11nyils">
+          <text>"WARNING"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape id="Decision_0gl6t7v_di" dmnElementRef="Decision_0gl6t7v">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

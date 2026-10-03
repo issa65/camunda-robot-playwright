@@ -1,0 +1,7 @@
+{
+  "id": "RPA_16sggog",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    OfficeInspectorLibrary\n\nTask Setup    Ensure Powerpoint Closed\n\n*** Tasks ***\nInspect PowerPoint Startup\n    ${startup}=    Inspect Office Startup\n    ...    powerpoint\n    ...    timeout=10\n    ...    poll_interval=0.005\n\n    Log To Console    ${startup}"
+}

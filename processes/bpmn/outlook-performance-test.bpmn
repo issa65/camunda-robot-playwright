@@ -92,14 +92,14 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="save-test-result" />
         <zeebe:ioMapping>
-          <zeebe:input source="=testId" target="testRunId" />
-          <zeebe:input source="=&#34;Outlook Email Performance&#34;" target="testName" />
+          <zeebe:input source="=testRunId" target="testRunId" />
+          <zeebe:input source="=&#34;Outlook Startup Performance&#34;" target="testName" />
           <zeebe:input source="=&#34;TECHNICAL&#34;" target="testType" />
           <zeebe:input source="=&#34;Outlook&#34;" target="component" />
-          <zeebe:input source="=if emailSent = true and emailReceived = true&#10;then &#34;PASS&#34;&#10;else &#34;FAIL&#34;" target="result" />
+          <zeebe:input source="=testResult" target="result" />
           <zeebe:input source="=if testResult = &#34;FAIL&#34; then &#34;ERROR&#34; else performanceStatus" target="status" />
           <zeebe:input source="=totalE2EDurationSeconds" target="durationSeconds" />
-          <zeebe:input source="=&#34;Outlook email E2E performance test&#34;" target="message" />
+          <zeebe:input source="=&#34;Outlook cold startup performance measurement&#34;" target="message" />
           <zeebe:input source="=workerUser" target="workerUser" />
           <zeebe:input source="=workerHost" target="workerHost" />
           <zeebe:input source="=errorType" target="errorType" />
@@ -155,9 +155,6 @@
       <bpmndi:BPMNShape id="Event_05nc53m_di" bpmnElement="Event_05nc53m">
         <dc:Bounds x="922" y="592" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_02k0don_di" bpmnElement="Activity_17at8ik">
-        <dc:Bounds x="300" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0e3miat_di" bpmnElement="Activity_0e3miat">
         <dc:Bounds x="570" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -175,8 +172,11 @@
       <bpmndi:BPMNShape id="Event_0ral4b3_di" bpmnElement="Event_0ral4b3">
         <dc:Bounds x="692" y="702" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02k0don_di" bpmnElement="Activity_17at8ik">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="182" y="122" width="36" height="36" />
+        <dc:Bounds x="182" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_01yuoqg_di" bpmnElement="Flow_01yuoqg">
         <di:waypoint x="565" y="390" />
@@ -210,8 +210,8 @@
         <di:waypoint x="922" y="610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0c1walw_di" bpmnElement="Flow_0c1walw">
-        <di:waypoint x="218" y="140" />
-        <di:waypoint x="300" y="140" />
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pfc66i_di" bpmnElement="Flow_1pfc66i">
         <di:waypoint x="620" y="160" />
@@ -231,9 +231,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0czpcac_di" bpmnElement="Flow_0czpcac">
-        <di:waypoint x="400" y="140" />
-        <di:waypoint x="413" y="140" />
-        <di:waypoint x="413" y="120" />
+        <di:waypoint x="370" y="120" />
         <di:waypoint x="425" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0sfniry_di" bpmnElement="Flow_0sfniry">

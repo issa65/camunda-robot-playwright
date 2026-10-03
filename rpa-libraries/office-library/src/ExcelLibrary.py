@@ -15,6 +15,7 @@ from OfficeCommon import (
     wait_for_window as _wait_for_window,
     generate_test_id as _common_generate_test_id,
     control_metadata as _control_metadata,
+    save_office_file_as as _save_office_file_as,
 )
 
 
@@ -677,3 +678,44 @@ def ensure_excel_closed(timeout=10):
         )
 
     return True
+
+def save_excel_file(
+    file_path,
+    timeout=20
+):
+    window = _get_excel_main_window(
+        timeout
+    )
+
+    return _save_office_file(
+        window=window,
+        file_path=file_path,
+        timeout=timeout,
+    )
+
+def save_excel_file_as(
+    file_path,
+    timeout=20
+):
+    """
+    Saves the currently open Excel workbook using:
+
+        File
+        -> Save As
+        -> Browse
+        -> target path
+        -> Save
+
+    The actual Save-As automation is implemented
+    generically in OfficeCommon.
+    """
+
+    window = _get_excel_main_window(
+        timeout=timeout
+    )
+
+    return _save_office_file_as(
+        window=window,
+        file_path=file_path,
+        timeout=timeout,
+    )    
