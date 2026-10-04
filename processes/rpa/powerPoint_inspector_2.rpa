@@ -1,0 +1,7 @@
+{
+  "id": "RPA_1tvtg34",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    OfficeInspectorLibrary\n\n*** Tasks ***\nInspect PowerPoint Main Window\n    ${result}=    Inspect Foreground Window Controls\n    ...    //ISSA/Gemeinsame Dateien/locators/powerpoint-document.json\n    ...    powerpoint\n    ...    ${False}"
+}

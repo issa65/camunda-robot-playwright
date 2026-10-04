@@ -221,8 +221,8 @@ def measure_outlook_startup(timeout=30):
     # --------------------------------------------------------
 
     else:
-        startup_to_loading = None
-        loading_to_main = None
+        startup_to_loading = ""
+        loading_to_main = ""
         startup_path = "DIRECT_MAIN"
 
     main_handle = main.get("handle")
