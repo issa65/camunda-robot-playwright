@@ -1,0 +1,9 @@
+timestamp;processInstanceKey;testRunId;testName;testType;component;workerUser;workerHost;workerIpAddress;result;status;durationSeconds;deliveryDurationSeconds;startupToLoadingSeconds;loadingToMainSeconds;startupToMainSeconds;startupPath;errorType;errorMessage;message
+2026-10-03T13:12:32.388762700Z;2251799814210657;1ED8526D;Word Basic Functional;FUNCTIONAL;Word;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;10.632;;;;;;;;Word write/read validation
+2026-10-03T13:13:08.645683900Z;2251799814210746;402E8D52;Excel Basic Functional;FUNCTIONAL;Excel;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;19.376;;;;;;;;Excel cell write/read validation
+2026-10-03T13:13:40.968692800Z;2251799814210852;0B0AC5DC;PowerPoint save Functional;FUNCTIONAL;PowerPoint;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;13.283;;;;;;;;PowerPoint save file validation
+2026-10-03T13:14:31.654099500Z;2251799814210940;CDAF2617;Outlook Email E2E;FUNCTIONAL;Outlook;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;24.456;13.211;;;;;;;Outlook email send and receive validation
+2026-10-03T15:46:09.923579300Z;2251799814213272;3C9148A7;Word Basic Functional;FUNCTIONAL;Word;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;8.85;;;;;;;;Word write/read validation
+2026-10-03T15:48:56.905075500Z;2251799814213754;BEBF5C5E;Word Basic Functional;FUNCTIONAL;Word;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;5.871;;;;;;;;Word write/read validation
+2026-10-03T19:02:12.608681900Z;2251799814215555;0583BED4;Word Basic Functional;FUNCTIONAL;Word;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;13.696;;;;;;;;Word write/read validation
+2026-10-03T19:07:37.600544900Z;2251799814216448;211B1369;Word save Functional;FUNCTIONAL;Word;vboxuser;RPA-WINDOWS-01;10.0.2.15;PASS;;22.07;;;;;;;;Word save file validation

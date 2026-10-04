@@ -1,0 +1,7 @@
+{
+  "id": "RPA_0nl88ci",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "*** Settings ***\nLibrary    Browser\nLibrary    Camunda\n\n*** Tasks ***\nOpen Example Page\n    New Browser    chromium    headless=False\n    New Page    ${url}\n\n    ${title}=    Get Title\n    Set Output Variable    pageTitle    ${title}\n\n    Sleep    3s\n    Close Browser"
+}
