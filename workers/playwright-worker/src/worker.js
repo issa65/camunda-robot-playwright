@@ -126,7 +126,7 @@ function runPlaywrightTest(testFile) {
           "/d",
           "/s",
           "/c",
-          `npx playwright test "${testFile}" --headed --reporter=line`
+          `npx playwright test ${testFile} --headed --reporter=line`
         ],
         {
           cwd:
