@@ -6,7 +6,10 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="Activity_1whe2rz" name="Playwright Login Check">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="playwright-login-check" />
+        <zeebe:taskDefinition type="playwright-test" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;login&#34;" target="testName" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_11aw5cn</bpmn:incoming>
       <bpmn:outgoing>Flow_1v4hc03</bpmn:outgoing>
