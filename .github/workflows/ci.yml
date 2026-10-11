@@ -49,7 +49,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: rpa-libraries/offic-library
+        working-directory: rpa-libraries/office-library
 
     steps:
       - name: Checkout repository
@@ -75,4 +75,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: outlook-library-wheel
-          path: rpa-libraries/offic-library/dist/*.whl
+          path: rpa-libraries/office-library/dist/*.whl
