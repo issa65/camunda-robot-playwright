@@ -1,0 +1,79 @@
+name: Deploy Playwright Worker
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+    paths:
+      - "workers/playwright-worker/**"
+      - ".github/workflows/deploy-playwright-worker.yml"
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - Windows
+      - X64
+      - playwright
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show deployment information
+        shell: powershell
+        run: |
+          Write-Host "Deploying Playwright worker"
+          Write-Host "Runner:"
+          hostname
+
+          Write-Host "Source:"
+          Write-Host "$env:GITHUB_WORKSPACE\workers\playwright-worker"
+
+          Write-Host "Target:"
+          Write-Host "C:\dev\camunda-robot-playwright\workers\playwright-worker"
+
+      - name: Deploy Playwright worker files
+        shell: powershell
+        run: |
+          $source = "$env:GITHUB_WORKSPACE\workers\playwright-worker"
+          $target = "C:\dev\camunda-robot-playwright\workers\playwright-worker"
+
+          New-Item `
+            -ItemType Directory `
+            -Force `
+            -Path $target | Out-Null
+
+          robocopy `
+            $source `
+            $target `
+            /E `
+            /XD node_modules test-results playwright-report blob-report `
+            /XF .env
+
+          $exitCode = $LASTEXITCODE
+
+          if ($exitCode -ge 8) {
+            throw "Robocopy failed with exit code $exitCode"
+          }
+
+          Write-Host "Playwright worker files deployed successfully."
+
+      - name: Install Node dependencies
+        shell: powershell
+        working-directory: C:\dev\camunda-robot-playwright\workers\playwright-worker
+        run: |
+          npm ci
+
+      - name: Verify Playwright installation
+        shell: powershell
+        working-directory: C:\dev\camunda-robot-playwright\workers\playwright-worker
+        run: |
+          npx playwright --version
+
+      - name: Deployment completed
+        shell: powershell
+        run: |
+          Write-Host "Deployment to PW-WINDOWS-01 completed successfully."
