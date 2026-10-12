@@ -77,6 +77,37 @@ jobs:
         run: |
           npx playwright --version
 
+      - name: Restart Camunda Playwright Worker
+        shell: powershell
+        run: |
+          $taskName = "Camunda Playwright Worker"
+
+          Write-Host "Stopping Playwright worker..."
+
+          Stop-ScheduledTask `
+            -TaskName $taskName `
+            -ErrorAction SilentlyContinue
+
+          Start-Sleep -Seconds 2
+
+          Write-Host "Starting Playwright worker..."
+
+          Start-ScheduledTask `
+            -TaskName $taskName
+
+          Start-Sleep -Seconds 3
+
+          $task = Get-ScheduledTask `
+            -TaskName $taskName
+
+          Write-Host "Worker task state: $($task.State)"
+
+          if ($task.State -ne "Running") {
+            throw "Playwright worker task is not running."
+          }
+
+          Write-Host "Playwright worker restarted successfully."    
+
       - name: Deployment completed
         shell: powershell
         run: |
