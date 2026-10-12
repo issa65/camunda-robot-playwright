@@ -53,13 +53,17 @@ jobs:
             /XD node_modules test-results playwright-report blob-report `
             /XF .env
 
-          $exitCode = $LASTEXITCODE
+          $robocopyExitCode = $LASTEXITCODE
 
-          if ($exitCode -ge 8) {
-            throw "Robocopy failed with exit code $exitCode"
+          Write-Host "Robocopy exit code: $robocopyExitCode"
+
+          if ($robocopyExitCode -ge 8) {
+            throw "Robocopy failed with exit code $robocopyExitCode"
           }
 
           Write-Host "Playwright worker files deployed successfully."
+
+          exit 0
 
       - name: Install Node dependencies
         shell: powershell
