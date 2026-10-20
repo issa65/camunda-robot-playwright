@@ -3,9 +3,9 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "camunda-outlook-library"
+name = "camunda-office-library"
 version = "0.8.3"
-description = "Robot Framework library for Outlook automation with pywinauto"
+description = "Robot Framework library for Office automation with pywinauto"
 requires-python = ">=3.12"
 dependencies = [
     "pywinauto>=0.6.8"
