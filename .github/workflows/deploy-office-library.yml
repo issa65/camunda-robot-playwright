@@ -68,7 +68,7 @@ jobs:
           path: wheel
 
       - name: Verify downloaded wheel
-        shell: pwsh
+        shell: powershell
         run: |
           $wheels = @(Get-ChildItem wheel -Filter *.whl)
           if ($wheels.Count -ne 1) {
