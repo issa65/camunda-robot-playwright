@@ -78,3 +78,28 @@ jobs:
           Get-FileHash $wheels[0].FullName -Algorithm SHA256
 
           Write-Host "Wheel successfully downloaded to RPA-WINDOWS-01"
+      - name: Check RPA deployment permissions
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          Write-Host "Runner identity:"
+          whoami
+
+          Write-Host "Python installation:"
+          $python = "C:\dev\camunda-rpa-worker\python\venv\Scripts\python.exe"
+
+          if (-not (Test-Path $python)) {
+            throw "RPA Python environment not found"
+          }
+
+          & $python --version
+
+          Write-Host "RPA Worker scheduled task:"
+          Get-ScheduledTask -TaskName "Camunda-RPA-Worker" |
+            Select-Object TaskName, State, TaskPath
+
+          Write-Host "RPA Worker process:"
+          Get-CimInstance Win32_Process |
+            Where-Object {
+              $_.Name -eq "rpa-worker_1.3.2_win32_amd64.exe"
+            } |
+            Select-Object ProcessId, Name
