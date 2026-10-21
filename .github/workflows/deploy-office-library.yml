@@ -103,3 +103,14 @@ jobs:
               $_.Name -eq "rpa-worker_1.3.2_win32_amd64.exe"
             } |
             Select-Object ProcessId, Name
+      - name: Test scheduled task start permission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $task = Get-ScheduledTask -TaskName "Camunda-RPA-Worker"
+
+          if ($task.State -ne "Running") {
+            throw "Worker task is not running. Test aborted."
+          }
+
+          Write-Host "Worker task is running."
+          Write-Host "Start/stop permissions not yet tested."      
