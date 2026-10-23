@@ -1,0 +1,51 @@
+
+name: Test RPA Worker Control
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-worker-control:
+    runs-on: [self-hosted, Windows, X64, rpa-vm]
+
+    steps:
+      - name: Stop and restart RPA Worker
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $taskName = "Camunda-RPA-Worker"
+          $workerName = "rpa-worker_1.3.2_win32_amd64.exe"
+
+          try {
+            Write-Host "Stopping RPA Worker..."
+            Stop-ScheduledTask -TaskName $taskName
+
+            Start-Sleep -Seconds 5
+
+            $workers = @(Get-CimInstance Win32_Process |
+              Where-Object { $_.Name -eq $workerName })
+
+            if ($workers.Count -ne 0) {
+              throw "Worker is still running after stop"
+            }
+
+            Write-Host "Worker stopped successfully"
+          }
+          finally {
+            Write-Host "Starting RPA Worker..."
+            Start-ScheduledTask -TaskName $taskName
+          }
+
+          Start-Sleep -Seconds 10
+
+          $workers = @(Get-CimInstance Win32_Process |
+            Where-Object { $_.Name -eq $workerName })
+
+          if ($workers.Count -ne 1) {
+            throw "Expected exactly one running worker"
+          }
+
+          Write-Host "Worker restart successful"
