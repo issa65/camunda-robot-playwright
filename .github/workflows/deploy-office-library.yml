@@ -113,4 +113,27 @@ jobs:
           }
 
           Write-Host "Worker task is running."
-          Write-Host "Start/stop permissions not yet tested."      
+          Write-Host "Start/stop permissions not yet tested."
+      - name: Check RPA worker control preparation
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          Write-Host "Runner account:"
+          whoami
+
+          Write-Host "Scheduled task status:"
+          $task = Get-ScheduledTask -TaskName "Camunda-RPA-Worker" -ErrorAction Stop
+          Write-Host "Task state: $($task.State)"
+
+          Write-Host "Worker processes:"
+          $workers = @(Get-CimInstance Win32_Process |
+            Where-Object {
+              $_.Name -eq "rpa-worker_1.3.2_win32_amd64.exe"
+            })
+
+          Write-Host "Worker count: $($workers.Count)"
+
+          if ($workers.Count -ne 1) {
+            throw "Expected exactly one RPA worker process"
+          }
+
+          Write-Host "Read-only checks successful"      
