@@ -1,0 +1,201 @@
+name: Install Office Library on RPA VM
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rpa-vm-installation
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rpa-libraries/office-library
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build exactly one wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip setuptools wheel
+          mkdir -p dist
+          rm -f dist/*.whl
+          python -m pip wheel . --no-deps -w dist
+          wheels=(dist/*.whl)
+          test "${#wheels[@]}" -eq 1
+          (cd dist && sha256sum "${wheels[0]##*/}" > wheel.sha256)
+      - name: Upload wheel and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: office-library-wheel
+          path: rpa-libraries/office-library/dist/
+          if-no-files-found: error
+
+  install-vm:
+    needs: build
+    runs-on: [self-hosted, Windows, X64, rpa-vm]
+    environment: rpa-production
+    timeout-minutes: 20
+    steps:
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: office-library-wheel
+          path: wheel
+      - name: Verify and deploy with rollback
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = 'C:\dev\camunda-rpa-worker'
+          $python = Join-Path $root 'python\venv\Scripts\python.exe'
+          $packages = Join-Path $root 'packages'
+          $requirements = Join-Path $root 'extra-requirements.txt'
+          $taskName = 'Camunda-RPA-Worker'
+          $workerName = 'rpa-worker_1.3.2_win32_amd64.exe'
+          $backupRoot = Join-Path $root 'deployment-backup'
+          $backup = Join-Path $backupRoot ("run-$env:GITHUB_RUN_ID-attempt-$env:GITHUB_RUN_ATTEMPT")
+          $wheelFiles = @(Get-ChildItem -LiteralPath 'wheel' -Filter '*.whl' -File)
+          if ($wheelFiles.Count -ne 1) { throw 'Expected exactly one wheel' }
+          $newWheel = $wheelFiles[0]
+          if ($newWheel.Name -notmatch '^camunda_office_library-(\d+\.\d+\.\d+(?:[a-zA-Z0-9.]+)?)-py3-none-any\.whl$') {
+            throw "Unexpected wheel name: $($newWheel.Name)"
+          }
+          $newVersion = $Matches[1]
+          $hashFile = 'wheel\wheel.sha256'
+          if (-not (Test-Path -LiteralPath $hashFile)) { throw 'Missing checksum file' }
+          $record = (Get-Content -LiteralPath $hashFile -Raw).Trim()
+          if ($record -notmatch '^([a-fA-F0-9]{64})\s+\*?([^\s]+)$') { throw 'Invalid checksum record' }
+          $expectedHash = $Matches[1]
+          $checksumFileName = $Matches[2]
+          if ($checksumFileName -ne $newWheel.Name) { throw 'Checksum filename does not match wheel' }
+          $newHash = (Get-FileHash -LiteralPath $newWheel.FullName -Algorithm SHA256).Hash
+          if ($expectedHash -ne $newHash) { throw 'Wheel SHA256 mismatch' }
+
+          foreach ($path in @($python, $requirements, $packages)) {
+            if (-not (Test-Path -LiteralPath $path)) { throw "Missing path: $path" }
+          }
+          $task = Get-ScheduledTask -TaskName $taskName -ErrorAction Stop
+          if ($task.State -ne 'Running') { throw "Worker task must be Running before deployment; found $($task.State)" }
+          $workerProcesses = @(Get-CimInstance Win32_Process | Where-Object Name -eq $workerName)
+          if ($workerProcesses.Count -ne 1) { throw "Expected one running worker, found $($workerProcesses.Count)" }
+
+          $metadata = & $python -m pip show camunda-office-library 2>&1
+          if ($LASTEXITCODE -ne 0) { throw "Cannot determine installed package: $metadata" }
+          $versionLine = @($metadata | Where-Object { $_ -match '^Version:\s*' })
+          if ($versionLine.Count -ne 1) { throw 'Installed version not found' }
+          $oldVersion = ($versionLine[0] -replace '^Version:\s*', '').Trim()
+          $oldWheel = Join-Path $packages "camunda_office_library-$oldVersion-py3-none-any.whl"
+          if (-not (Test-Path -LiteralPath $oldWheel)) { throw "Rollback wheel missing: $oldWheel" }
+          $target = Join-Path $packages $newWheel.Name
+          $sameVersion = ($oldVersion -eq $newVersion)
+          if ($sameVersion) {
+            $oldHash = (Get-FileHash -LiteralPath $oldWheel -Algorithm SHA256).Hash
+            if ($oldHash -ne $newHash) {
+              throw 'Same version but different wheel bytes: increase the version in pyproject.toml before deploying.'
+            }
+            & $python -c 'import OutlookLibrary, ExcelLibrary, WordLibrary, PowerPointLibrary, OfficeCommon, OfficeInspectorLibrary'
+            if ($LASTEXITCODE -ne 0) { throw 'Existing installation failed import check' }
+            Write-Host "Version $newVersion and wheel hash already match: no deployment needed."
+            exit 0
+          }
+
+          # All checks above are read-only. No worker change before backup succeeds.
+          New-Item -ItemType Directory -Force -Path $backup | Out-Null
+          $backupWheel = Join-Path $backup (Split-Path $oldWheel -Leaf)
+          Copy-Item -LiteralPath $oldWheel -Destination $backupWheel -ErrorAction Stop
+          $requirementsBackup = Join-Path $backup 'extra-requirements.txt'
+          Copy-Item -LiteralPath $requirements -Destination $requirementsBackup -ErrorAction Stop
+          $previousWheelHash = (Get-FileHash -LiteralPath $backupWheel -Algorithm SHA256).Hash
+          if ($previousWheelHash -ne (Get-FileHash -LiteralPath $oldWheel -Algorithm SHA256).Hash) {
+            throw 'Backup wheel checksum mismatch'
+          }
+          if (Test-Path -LiteralPath $target) { throw "Target wheel already exists unexpectedly: $target" }
+
+          $stopRequested = $false
+          $installationAttempted = $false
+          $deploymentError = $null
+          try {
+            Write-Host 'Stopping scheduled RPA worker...'
+            $stopRequested = $true
+            Stop-ScheduledTask -TaskName $taskName -ErrorAction Stop
+            $deadline = (Get-Date).AddSeconds(40)
+            do {
+              Start-Sleep -Seconds 2
+              $workers = @(Get-CimInstance Win32_Process | Where-Object Name -eq $workerName)
+            } while ($workers.Count -ne 0 -and (Get-Date) -lt $deadline)
+            if ($workers.Count -ne 0) { throw 'Worker did not stop' }
+
+            Copy-Item -LiteralPath $newWheel.FullName -Destination $target -ErrorAction Stop
+            if ((Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash -ne $newHash) {
+              throw 'Copied wheel checksum mismatch'
+            }
+            $installationAttempted = $true
+            & $python -m pip install --no-deps --force-reinstall $target
+            if ($LASTEXITCODE -ne 0) { throw 'pip install failed' }
+            & $python -c 'import OutlookLibrary, ExcelLibrary, WordLibrary, PowerPointLibrary, OfficeCommon, OfficeInspectorLibrary'
+            if ($LASTEXITCODE -ne 0) { throw 'Module import verification failed' }
+            $installedMetadata = & $python -m pip show camunda-office-library
+            if ($LASTEXITCODE -ne 0 -or -not (@($installedMetadata | Where-Object { $_ -eq "Version: $newVersion" }).Count)) {
+              throw 'Installed package version verification failed'
+            }
+
+            $lines = @(Get-Content -LiteralPath $requirements | Where-Object {
+              $_ -notmatch 'camunda_(office|outlook)_library[^\r\n]*\.whl'
+            })
+            $lines += $target
+            $utf8 = New-Object System.Text.UTF8Encoding($false)
+            [System.IO.File]::WriteAllLines($requirements, [string[]]$lines, $utf8)
+
+            Write-Host 'Starting RPA worker...'
+            Start-ScheduledTask -TaskName $taskName -ErrorAction Stop
+            Start-Sleep -Seconds 10
+            $workers = @(Get-CimInstance Win32_Process | Where-Object Name -eq $workerName)
+            $taskState = (Get-ScheduledTask -TaskName $taskName -ErrorAction Stop).State
+            if ($workers.Count -ne 1 -or $taskState -ne 'Running') {
+              throw "Worker restart check failed (processes=$($workers.Count), task=$taskState)"
+            }
+            Write-Host "Deployment successful: $($newWheel.Name). Verify Camunda connectivity separately."
+          }
+          catch {
+            $deploymentError = $_
+            Write-Host "::error::Deployment failed: $($_.Exception.Message)"
+            if ($installationAttempted) {
+              Write-Host 'Attempting rollback of Python package...'
+              try {
+                & $python -m pip install --no-deps --force-reinstall $backupWheel
+                if ($LASTEXITCODE -ne 0) { throw 'Rollback pip install failed' }
+                Copy-Item -LiteralPath $requirementsBackup -Destination $requirements -Force -ErrorAction Stop
+                Write-Host 'Rollback package and requirements restored.'
+              } catch {
+                Write-Host "::error::Rollback failed: $($_.Exception.Message)"
+              }
+            }
+            if (Test-Path -LiteralPath $target) {
+              try { Remove-Item -LiteralPath $target -Force -ErrorAction Stop } catch {
+                Write-Host "::warning::Unable to remove new wheel: $($_.Exception.Message)"
+              }
+            }
+          }
+          finally {
+            if ($stopRequested) {
+              try {
+                $taskState = (Get-ScheduledTask -TaskName $taskName -ErrorAction Stop).State
+                if ($taskState -ne 'Running') { Start-ScheduledTask -TaskName $taskName -ErrorAction Stop }
+                Start-Sleep -Seconds 8
+                $workers = @(Get-CimInstance Win32_Process | Where-Object Name -eq $workerName)
+                if ($workers.Count -ne 1) { throw "Expected exactly one worker after recovery, found $($workers.Count)" }
+              } catch {
+                Write-Host "::error::Worker recovery failed: $($_.Exception.Message)"
+                if (-not $deploymentError) { $deploymentError = $_ }
+              }
+            }
+          }
+          if ($deploymentError) { throw "Deployment failed; inspect rollback and worker logs: $($deploymentError.Exception.Message)" }
