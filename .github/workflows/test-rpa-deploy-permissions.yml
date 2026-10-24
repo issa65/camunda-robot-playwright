@@ -1,0 +1,54 @@
+
+name: Test RPA Deployment Permissions
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-permissions:
+    runs-on: [self-hosted, Windows, X64, rpa-vm]
+    environment: rpa-production
+
+    steps:
+      - name: Test deployment directories
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $root = "C:\dev\camunda-rpa-worker"
+          $paths = @(
+            "$root\packages",
+            "$root\deployment-backup",
+            "$root\python\venv\Lib\site-packages",
+            "$root\python\venv\Scripts"
+          )
+
+          Write-Host "Runner identity:"
+          whoami
+
+          foreach ($path in $paths) {
+            $testFile = Join-Path $path ".github-runner-write-test"
+
+            try {
+              [System.IO.File]::WriteAllText(
+                $testFile,
+                "GitHub runner permission test"
+              )
+
+              if (-not (Test-Path $testFile)) {
+                throw "Cannot create file in $path"
+              }
+
+              Write-Host "WRITE OK: $path"
+            }
+            finally {
+              if (Test-Path $testFile) {
+                Remove-Item $testFile -Force
+              }
+            }
+          }
+
+          Write-Host "All directory write tests passed."
