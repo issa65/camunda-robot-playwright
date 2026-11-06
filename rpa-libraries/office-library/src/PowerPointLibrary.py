@@ -298,3 +298,43 @@ def generate_powerpoint_test_id():
     """
 
     return generate_test_id()
+
+
+def inspect_powerpoint_text_controls():
+    window = _get_powerpoint_main_window()
+
+    workspace = window.child_window(
+        auto_id=POWERPOINT_WORKSPACE_ID,
+        control_type="Pane"
+    )
+
+    workspace.wait(
+        "visible",
+        timeout=10
+    )
+
+    results = []
+
+    for control in workspace.descendants():
+        info = control.element_info
+
+        try:
+            text = control.iface_text.DocumentRange.GetText(-1)
+        except Exception:
+            text = None
+
+        try:
+            value = control.iface_value.CurrentValue
+        except Exception:
+            value = None
+
+        results.append({
+            "name": control.window_text(),
+            "automationId": info.automation_id,
+            "controlType": info.control_type,
+            "className": info.class_name,
+            "textPatternValue": text,
+            "valuePatternValue": value
+        })
+
+    return results
