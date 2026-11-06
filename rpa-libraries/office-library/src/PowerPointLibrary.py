@@ -338,3 +338,66 @@ def inspect_powerpoint_text_controls():
         })
 
     return results
+
+
+
+def write_powerpoint_text(text):
+    """
+    Writes text into the title placeholder
+    of the first slide.
+    """
+    import win32com.client
+
+    ppt = win32com.client.GetActiveObject(
+        "PowerPoint.Application"
+    )
+
+    presentation = ppt.ActivePresentation
+
+    if presentation.Slides.Count < 1:
+        raise RuntimeError(
+            "PowerPoint presentation has no slides."
+        )
+
+    slide = presentation.Slides(1)
+
+    if not slide.Shapes.HasTitle:
+        raise RuntimeError(
+            "First slide has no title placeholder."
+        )
+
+    title_shape = slide.Shapes.Title
+    title_shape.TextFrame.TextRange.Text = str(text)
+
+    return True
+
+
+def read_powerpoint_text():
+    """
+    Reads the title text from the first slide.
+    """
+    import win32com.client
+
+    ppt = win32com.client.GetActiveObject(
+        "PowerPoint.Application"
+    )
+
+    presentation = ppt.ActivePresentation
+
+    if presentation.Slides.Count < 1:
+        raise RuntimeError(
+            "PowerPoint presentation has no slides."
+        )
+
+    slide = presentation.Slides(1)
+
+    if not slide.Shapes.HasTitle:
+        raise RuntimeError(
+            "First slide has no title placeholder."
+        )
+
+    title_shape = slide.Shapes.Title
+
+    return str(
+        title_shape.TextFrame.TextRange.Text
+    )
