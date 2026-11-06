@@ -1374,50 +1374,70 @@ def save_office_file_as(
 
     browse.click_input()
 
+    
     # ---------------------------------------------------------
-    # Auf Windows "Speichern unter"-Dialog warten
+    # Windows-Speichern-unter-Dialog über UI Automation finden
     # ---------------------------------------------------------
-    deadline = (
-        perf_counter()
-        + float(timeout)
+    desktop = Desktop(backend="uia")
+
+    office_pid = get_window_process_id(
+        office_window.wrapper_object()
     )
 
-    dialog_handle = None
+    deadline = perf_counter() + float(timeout)
+    save_dialog = None
 
     while perf_counter() < deadline:
+        for candidate in desktop.windows():
+            try:
+                if not candidate.is_visible():
+                    continue
 
-        foreground_handle = (
-            win32gui.GetForegroundWindow()
-        )
+                # Nur Dialogfenster berücksichtigen.
+                if get_window_class(candidate) != "#32770":
+                    continue
 
-        if foreground_handle:
+                # Möglichst dem richtigen Office-Prozess zuordnen.
+                if (
+                    office_pid is not None
+                    and get_window_process_id(candidate) != office_pid
+                ):
+                    continue
 
-            title = (
-                win32gui.GetWindowText(
-                    foreground_handle
+                dialog = desktop.window(handle=candidate.handle)
+
+                file_name_field = dialog.child_window(
+                    auto_id="1001",
+                    control_type="Edit"
                 )
-                or ""
-            ).strip()
 
-            if save_as_title.lower() in title.lower():
-                dialog_handle = foreground_handle
-                break
+                save_button = dialog.child_window(
+                    auto_id="1",
+                    control_type="Button"
+                )
 
-        time.sleep(0.1)
+                if (
+                    file_name_field.exists(timeout=0.1)
+                    and save_button.exists(timeout=0.1)
+                ):
+                    save_dialog = dialog
+                    break
 
-    if dialog_handle is None:
+            except Exception:
+                continue
+
+        if save_dialog is not None:
+            break
+
+        time.sleep(0.2)
+
+    if save_dialog is None:
         raise RuntimeError(
-            "Windows Save As dialog was not detected."
+            "Windows Save As dialog was not detected "
+            f"within {timeout} seconds. "
+            f"Office PID: {office_pid}"
         )
 
-    # ---------------------------------------------------------
-    # Dialog über UIA ansprechen
-    # ---------------------------------------------------------
-    save_dialog = Desktop(
-        backend="uia"
-    ).window(
-        handle=int(dialog_handle)
-    )
 
     # ---------------------------------------------------------
     # Vollständiger Zielpfad
