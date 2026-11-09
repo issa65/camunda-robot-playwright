@@ -1,0 +1,7 @@
+{
+  "id": "RPA_08ihbo4",
+  "name": "",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.9.0",
+  "script": "\n*** Settings ***\nLibrary    Browser\n\n*** Variables ***\n${BASE_URL}         http://192.168.178.30:5173\n${ORDER_NUMBER}     ORD-1001\n${CUSTOMER}         Testkunde\n${QUANTITY}         2\n\n*** Test Cases ***\nTC-001 Auftrag erfolgreich anlegen\n    New Browser    chromium    headless=${FALSE}    channel=chrome\n    New Context\n    New Page    ${BASE_URL}\n\n    # 1. Auftragsformular ausfüllen\n    Fill Text    [data-testid=\"order-number\"]    ${ORDER_NUMBER}\n    Fill Text    [data-testid=\"customer\"]        ${CUSTOMER}\n    Fill Text    [data-testid=\"quantity\"]        ${QUANTITY}\n\n    # 2. Auftrag absenden\n    Click    [data-testid=\"submit-order\"]\n\n    # 3. Erfolgsmeldung prüfen\n    Wait For Elements State    [data-testid=\"order-success\"]    visible\n\n    Get Text    [data-testid=\"order-success\"]    contains    Auftrag erfolgreich angelegt!\n    Get Text    [data-testid=\"order-success\"]    contains    ${ORDER_NUMBER}\n    Get Text    [data-testid=\"order-success\"]    contains    ${CUSTOMER}\n    Get Text    [data-testid=\"order-success\"]    contains    Menge: ${QUANTITY}\n\n    Log To Console    TC-001 erfolgreich abgeschlossen\n\n    Close Browser\n"
+}
