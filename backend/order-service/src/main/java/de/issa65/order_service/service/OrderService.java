@@ -3,45 +3,78 @@ package de.issa65.order_service.service;
 
 import de.issa65.order_service.api.OrderRequest;
 import de.issa65.order_service.api.OrderResponse;
-import org.springframework.stereotype.Service;
+import de.issa65.order_service.entity.OrderEntity;
+import de.issa65.order_service.repository.OrderRepository;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import io.camunda.client.CamundaClient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.Map;
 
 @Service
 public class OrderService {
 
-    private final Map<String, OrderResponse> orders =
-            new ConcurrentHashMap<>();
+    private static final Logger log =
+            LoggerFactory.getLogger(OrderService.class);
 
+    private final OrderRepository orderRepository;
     private final CamundaClient camundaClient;
+    private final TransactionTemplate transactionTemplate;
 
-    public OrderService(CamundaClient camundaClient) {
+    public OrderService(
+            OrderRepository orderRepository,
+            CamundaClient camundaClient,
+            TransactionTemplate transactionTemplate) {
+
+        this.orderRepository = orderRepository;
         this.camundaClient = camundaClient;
+        this.transactionTemplate = transactionTemplate;
     }
-    
+
     public OrderResponse createOrder(OrderRequest request) {
 
-        OrderResponse order = new OrderResponse(
-                request.orderNumber(),
-                request.customer(),
-                request.quantity(),
-                "CREATED"
-        );
-
-        OrderResponse existing = orders.putIfAbsent(
-                request.orderNumber(),
-                order
-        );
-
-        if (existing != null) {
+        // 1. Doppelte Auftragsnummer prüfen
+        if (orderRepository.existsByOrderNumber(
+                request.orderNumber())) {
             throw new IllegalArgumentException(
                     "Order already exists: " + request.orderNumber()
             );
         }
 
+        // 2. Auftrag in einer eigenen Transaktion speichern.
+        // Nach execute() ist die Transaktion abgeschlossen.
+        try {
+            transactionTemplate.executeWithoutResult(status -> {
+                OrderEntity entity = new OrderEntity(
+                        request.orderNumber(),
+                        request.customer(),
+                        request.quantity()
+                );
+
+                orderRepository.saveAndFlush(entity);
+            });
+        } catch (DataIntegrityViolationException exception) {
+
+            // Auch konkurrierende doppelte POSTs berücksichtigen.
+            if (orderRepository.existsByOrderNumber(
+                    request.orderNumber())) {
+                throw new IllegalArgumentException(
+                        "Order already exists: "
+                                + request.orderNumber(),
+                        exception
+                );
+            }
+
+            throw exception;
+        }
+
+        // 3. Erst nach dem Datenbank-Commit Camunda starten
         try {
             var processInstance = camundaClient
                     .newCreateInstanceCommand()
@@ -55,43 +88,65 @@ public class OrderService {
                     .send()
                     .join();
 
-            System.out.println(
-                    "Camunda-Prozess gestartet: "
-                            + processInstance.getProcessInstanceKey()
-                            + " für Auftrag " + request.orderNumber()
+            log.info(
+                    "Camunda-Prozess {} fuer Auftrag {} gestartet",
+                    processInstance.getProcessInstanceKey(),
+                    request.orderNumber()
             );
 
         } catch (Exception exception) {
 
-            // Auftrag zurücknehmen, falls Camunda nicht startet.
-            orders.remove(request.orderNumber(), order);
+            log.error(
+                    "Camunda-Prozessstart fuer Auftrag {} nicht bestaetigt",
+                    request.orderNumber(),
+                    exception
+            );
 
+            // Auftrag nicht blind löschen:
+            // Camunda könnte trotz Timeout gestartet sein.
             throw new IllegalStateException(
-                    "Camunda-Prozess konnte nicht gestartet werden "
-                            + "für Auftrag " + request.orderNumber(),
+                    "Camunda-Prozessstart nicht bestaetigt fuer Auftrag "
+                            + request.orderNumber(),
                     exception
             );
         }
 
-        return order;
+        // 4. Antwort auf den erfolgreich angenommenen Auftrag
+        return new OrderResponse(
+                request.orderNumber(),
+                request.customer(),
+                request.quantity(),
+                "CREATED"
+        );
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrder(String orderNumber) {
-        return orders.get(orderNumber);
+
+        return orderRepository.findByOrderNumber(orderNumber)
+                .map(this::toResponse)
+                .orElse(null);
     }
 
+    @Transactional
     public OrderResponse updateOrderStatus(
             String orderNumber,
             String newStatus) {
 
-        return orders.computeIfPresent(
-                orderNumber,
-                (key, existing) -> new OrderResponse(
-                        existing.orderNumber(),
-                        existing.customer(),
-                        existing.quantity(),
-                        newStatus
-                )
+        return orderRepository.findByOrderNumber(orderNumber)
+                .map(entity -> {
+                    entity.updateStatus(newStatus);
+                    return toResponse(entity);
+                })
+                .orElse(null);
+    }
+
+    private OrderResponse toResponse(OrderEntity entity) {
+        return new OrderResponse(
+                entity.getOrderNumber(),
+                entity.getCustomer(),
+                entity.getQuantity(),
+                entity.getStatus()
         );
     }
 }
